@@ -1,3 +1,29 @@
+.cupcake-customizer {
+  border: 1px solid black;
+  display: flex;
+  flex-flow: column;
+  width: 300px;
+}
+button {
+  width: 60%;
+  margin: 2px;
+  border: 1px solid black;
+  cursor: pointer;
+}
+
+.bases,
+.frostings,
+.toppings,
+.details,
+.add-to-order {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 20px;
+}
+
 .selected {
-  color: red;
+  color: white;
+  background: pink;
 }

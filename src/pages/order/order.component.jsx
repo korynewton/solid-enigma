@@ -1,8 +1,10 @@
 import React from 'react';
 import axios from 'axios';
+import { generateId } from '../../utilities';
+
+import './order.styles.scss';
 
 import CupcakeCustomizer from '../../components/cupcake-cusomizer/cupcake-customizer.component';
-import AddCupcake from '../../components/add-cupcake/add-cupcake.component';
 import ReviewOrder from '../../components/review-order/review-order.component';
 
 class Order extends React.Component {
@@ -10,7 +12,7 @@ class Order extends React.Component {
     bases: [],
     frostings: [],
     toppings: [],
-    order: [],
+    cupcakes: [],
     viewOrder: false
   };
 
@@ -23,28 +25,57 @@ class Order extends React.Component {
       axios.get(`${baseURL}/toppings`)
     ]);
 
+    // generate ID for initial cupcake
+    const id = generateId();
+
     this.setState({
       bases: basesRes.data.bases,
       frostings: frostingsRes.data.frostings,
-      toppings: toppingsRes.data.toppings
+      toppings: toppingsRes.data.toppings,
+      cupcakes: [{ id }]
     });
   }
 
-  render() {
-    const { bases, frostings, toppings, viewOrder } = this.state;
-
-    return !viewOrder ? (
-      <div>
-        <CupcakeCustomizer
-          bases={bases}
-          frostings={frostings}
-          toppings={toppings}
-        />
-        <AddCupcake />
-      </div>
-    ) : (
-      <ReviewOrder />
+  addToOrder = customizedCupcake => {
+    console.log(customizedCupcake);
+    const newState = this.state.cupcakes.filter(
+      item => item.id !== customizedCupcake.id
     );
+    this.setState({ cupcakes: [...newState, customizedCupcake] });
+  };
+
+  addAnotherCupcake = () => {
+    const id = generateId();
+    this.setState(prevState => ({ cupcakes: [...prevState.cupcakes, { id }] }));
+  };
+
+  render() {
+    const { bases, frostings, toppings, viewOrder, cupcakes } = this.state;
+    const { addToOrder, addAnotherCupcake } = this;
+
+    if (!viewOrder) {
+      return (
+        <div>
+          <div className="cupcake-customizers">
+            {cupcakes.map(item => {
+              return (
+                <CupcakeCustomizer
+                  key={item.id}
+                  id={item.id}
+                  bases={bases}
+                  frostings={frostings}
+                  toppings={toppings}
+                  addToOrder={addToOrder}
+                />
+              );
+            })}
+          </div>
+          <button onClick={addAnotherCupcake}>Customize Another Cupcake</button>
+        </div>
+      );
+    } else {
+      return <ReviewOrder />;
+    }
   }
 }
 
