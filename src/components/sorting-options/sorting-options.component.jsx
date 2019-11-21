@@ -44,17 +44,18 @@ const SortingOptions = ({
 
       <div className="by-toppings">
         <h3>Toppings:</h3>
-        <select
-          onChange={e => handleSelectToppingChange(e)}
-          name="selectedToppings"
-        >
-          <option value="any">Any</option>
+        <form onChange={e => handleSelectToppingChange(e)}>
+          <div className="option">
+            Any:
+            <input type="checkbox" name="any" id="any" value="any" />
+          </div>
           {toppings.map(topping => (
-            <option key={topping.key} value={topping.key}>
+            <div key={topping.key} className="option">
               {topping.name}
-            </option>
+              <input type="checkbox" value={topping.key} />
+            </div>
           ))}
-        </select>
+        </form>
       </div>
     </div>
   );
