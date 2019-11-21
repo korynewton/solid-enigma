@@ -6,8 +6,8 @@ class CupcakeCustomizer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedBase: '',
-      selectedFrosting: '',
+      selectedBase: {},
+      selectedFrosting: {},
       selectedToppings: [],
       quantity: 1,
       total: 0,
@@ -20,17 +20,17 @@ class CupcakeCustomizer extends React.Component {
     const { selectedBase, selectedFrosting, selectedToppings } = this.state;
 
     const baseTotal = bases.reduce((acc, curr) => {
-      if (curr.key === selectedBase) return (acc += curr.price);
+      if (curr.key === selectedBase.key) return (acc += curr.price);
       return acc;
     }, 0);
 
     const frostingTotal = frostings.reduce((acc, curr) => {
-      if (curr.key === selectedFrosting) return (acc += curr.price);
+      if (curr.key === selectedFrosting.key) return (acc += curr.price);
       return acc;
     }, 0);
 
     const toppingTotal = toppings.reduce((acc, curr) => {
-      if (selectedToppings.includes(curr.key)) return (acc += curr.price);
+      if (selectedToppings.includes(curr)) return (acc += curr.price);
       return acc;
     }, 0);
 
@@ -39,9 +39,9 @@ class CupcakeCustomizer extends React.Component {
     if (prevState.total !== newTotal) this.setState({ total: newTotal });
   }
 
-  handleOnClick = (e, key) => {
+  handleOnClick = (e, base) => {
     const { name } = e.target;
-    this.setState({ [name]: key });
+    this.setState({ [name]: base });
   };
 
   handleUpdateQuantity = e => {
@@ -49,27 +49,35 @@ class CupcakeCustomizer extends React.Component {
     this.setState({ [name]: Number(value) });
   };
 
-  handleAddToppings = toppingKey => {
+  handleAddToppings = topping => {
     const { selectedToppings } = this.state;
-    if (selectedToppings.includes(toppingKey)) {
-      const newToppings = selectedToppings.filter(item => item !== toppingKey);
+    if (selectedToppings.includes(topping)) {
+      const newToppings = selectedToppings.filter(item => item !== topping);
       this.setState({ selectedToppings: newToppings });
     } else {
       this.setState(prevState => ({
-        selectedToppings: [...prevState.selectedToppings, toppingKey]
+        selectedToppings: [...prevState.selectedToppings, topping]
       }));
     }
   };
 
   addCupcakeToOrder = () => {
     const { id, addToOrder } = this.props;
-    const { selectedBase, selectedFrosting, selectedToppings } = this.state;
+    const {
+      selectedBase,
+      selectedFrosting,
+      selectedToppings,
+      quantity,
+      total
+    } = this.state;
 
     addToOrder({
       id,
-      selectedBase,
-      selectedFrosting,
-      selectedToppings
+      base: selectedBase,
+      frosting: selectedFrosting,
+      toppings: selectedToppings,
+      quantity,
+      total
     });
 
     this.setState({ addedToOrder: true });
@@ -96,9 +104,10 @@ class CupcakeCustomizer extends React.Component {
             return (
               <button
                 key={key}
+                base={base}
                 name="selectedBase"
-                onClick={e => handleOnClick(e, key)}
-                className={selectedBase === key ? 'selected' : ''}
+                onClick={e => handleOnClick(e, base)}
+                className={selectedBase.key === key ? 'selected' : ''}
               >
                 {`${name.replace(' Base', '')} $${(price / 100).toFixed(2)}`}
               </button>
@@ -115,8 +124,8 @@ class CupcakeCustomizer extends React.Component {
               <button
                 key={key}
                 name="selectedFrosting"
-                onClick={e => handleOnClick(e, key)}
-                className={selectedFrosting === key ? 'selected' : ''}
+                onClick={e => handleOnClick(e, frosting)}
+                className={selectedFrosting.key === key ? 'selected' : ''}
               >
                 {`${name.replace(' Frosting', '')} $${(price / 100).toFixed(
                   2
@@ -135,8 +144,8 @@ class CupcakeCustomizer extends React.Component {
               <button
                 key={key}
                 name="selectedToppings"
-                onClick={() => handleAddToppings(key)}
-                className={selectedToppings.includes(key) ? 'selected' : ''}
+                onClick={() => handleAddToppings(topping)}
+                className={selectedToppings.includes(topping) ? 'selected' : ''}
               >
                 {`${name} $${(price / 100).toFixed(2)}`}
               </button>

@@ -12,7 +12,8 @@ class Order extends React.Component {
     bases: [],
     frostings: [],
     toppings: [],
-    cupcakes: [],
+    uniqueCupcakes: [],
+    order: [],
     viewOrder: false
   };
 
@@ -32,32 +33,82 @@ class Order extends React.Component {
       bases: basesRes.data.bases,
       frostings: frostingsRes.data.frostings,
       toppings: toppingsRes.data.toppings,
-      cupcakes: [{ id }]
+      uniqueCupcakes: [{ id }]
     });
   }
 
   addToOrder = customizedCupcake => {
-    console.log(customizedCupcake);
-    const newState = this.state.cupcakes.filter(
-      item => item.id !== customizedCupcake.id
+    const { uniqueCupcakes } = this.state;
+    const { toppings, frosting, base, id, quantity } = customizedCupcake;
+
+    const newUniqueCupcakes = uniqueCupcakes.filter(
+      cupcakes => cupcakes.id !== id
     );
-    this.setState({ cupcakes: [...newState, customizedCupcake] });
+
+    let duplicateObj = {
+      base,
+      frosting,
+      toppings
+    };
+
+    let duplicate = [];
+
+    while (duplicate.length < quantity) {
+      duplicate.push(duplicateObj);
+    }
+
+    this.setState(prevState => ({
+      uniqueCupcakes: [...newUniqueCupcakes, customizedCupcake],
+      order: [...prevState.order, ...duplicate]
+    }));
   };
 
   addAnotherCupcake = () => {
     const id = generateId();
-    this.setState(prevState => ({ cupcakes: [...prevState.cupcakes, { id }] }));
+
+    this.setState(prevState => ({
+      uniqueCupcakes: [...prevState.uniqueCupcakes, { id }]
+    }));
+  };
+
+  toggleReviewOrder = () => {
+    this.setState(prevState => ({ viewOrder: !prevState.viewOrder }));
+  };
+
+  submitOrder = async selectedDate => {
+    const { history } = this.props;
+    const baseURL = 'http://localhost:4000/cupcakes';
+
+    const orderObj = {
+      order: { cupcakes: [...this.state.order], delivery_date: selectedDate }
+    };
+
+    const res = await axios.post(`${baseURL}/orders`, orderObj);
+    if (res.status === 200) {
+      history.push('/thankyou');
+    }
   };
 
   render() {
-    const { bases, frostings, toppings, viewOrder, cupcakes } = this.state;
-    const { addToOrder, addAnotherCupcake } = this;
+    const {
+      bases,
+      frostings,
+      toppings,
+      viewOrder,
+      uniqueCupcakes
+    } = this.state;
+    const {
+      addToOrder,
+      addAnotherCupcake,
+      toggleReviewOrder,
+      submitOrder
+    } = this;
 
     if (!viewOrder) {
       return (
         <div>
           <div className="cupcake-customizers">
-            {cupcakes.map(item => {
+            {uniqueCupcakes.map(item => {
               return (
                 <CupcakeCustomizer
                   key={item.id}
@@ -70,11 +121,21 @@ class Order extends React.Component {
               );
             })}
           </div>
-          <button onClick={addAnotherCupcake}>Customize Another Cupcake</button>
+          <div className="button-div">
+            <button onClick={addAnotherCupcake}>
+              Customize Another Cupcake
+            </button>
+            <button onClick={toggleReviewOrder}>Review Order</button>
+          </div>
         </div>
       );
     } else {
-      return <ReviewOrder />;
+      return (
+        <ReviewOrder
+          uniqueCupcakes={uniqueCupcakes}
+          submitOrder={submitOrder}
+        />
+      );
     }
   }
 }
