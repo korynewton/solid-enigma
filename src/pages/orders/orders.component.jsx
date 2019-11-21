@@ -1,9 +1,12 @@
 import React from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 import './orders.styles.scss';
 
 import SortingOptions from '../../components/sorting-options/sorting-options.component';
+import ViewPastOrder from '../../components/view-past-order/view-past-order.component';
+
 class Orders extends React.Component {
   state = {
     orders: [],
@@ -13,7 +16,9 @@ class Orders extends React.Component {
     filteredItems: [],
     bases: [],
     frostings: [],
-    toppings: []
+    toppings: [],
+    viewOrder: false,
+    orderToView: {}
   };
   async componentDidMount() {
     // retrieve orders from backend
@@ -142,53 +147,87 @@ class Orders extends React.Component {
     }
   };
 
+  viewSelectedOrder = order => {
+    this.setState(prevState => ({
+      viewOrder: !prevState.viewOrder,
+      orderToView: order
+    }));
+  };
+
   render() {
-    const { bases, frostings, toppings, orders, filteredItems } = this.state;
-    const { changeSort, handleSelectChange, handleSelectToppingChange } = this;
-    return (
-      <div>
-        <SortingOptions
-          bases={bases}
-          frostings={frostings}
-          toppings={toppings}
-          changeSort={changeSort}
-          handleSelectChange={handleSelectChange}
-          handleSelectToppingChange={handleSelectToppingChange}
-        />
+    const {
+      bases,
+      frostings,
+      toppings,
+      orders,
+      filteredItems,
+      viewOrder,
+      orderToView
+    } = this.state;
+    const {
+      changeSort,
+      handleSelectChange,
+      handleSelectToppingChange,
+      viewSelectedOrder
+    } = this;
 
-        <h2>Orders:</h2>
+    if (!viewOrder) {
+      return (
+        <div>
+          <SortingOptions
+            bases={bases}
+            frostings={frostings}
+            toppings={toppings}
+            changeSort={changeSort}
+            handleSelectChange={handleSelectChange}
+            handleSelectToppingChange={handleSelectToppingChange}
+          />
 
-        <table>
-          <tbody>
-            <tr>
-              <th>Order ID:</th>
-              <th>Delivery Date:</th>
-            </tr>
-          </tbody>
-          <tbody>
-            {!filteredItems.length
-              ? orders.map(order => {
-                  const date = new Date(`${order.delivery_date}`);
-                  return (
-                    <tr key={order.id}>
-                      <td>{order.id}</td>
-                      <td>{date.toLocaleString()}</td>
-                    </tr>
-                  );
-                })
-              : filteredItems.map(item => {
-                  const date = new Date(`${item.delivery_date}`);
-                  return (
-                    <tr key={item.id}>
-                      <td>{item.id}</td>
-                      <td>{date.toLocaleString()}</td>
-                    </tr>
-                  );
-                })}
-          </tbody>
-        </table>
-      </div>
-    );
+          <h2>Orders:</h2>
+
+          <table>
+            <tbody>
+              <tr>
+                <th>Order ID:</th>
+                <th>Delivery Date:</th>
+              </tr>
+            </tbody>
+            <tbody>
+              {!filteredItems.length
+                ? orders.map(order => {
+                    const date = new Date(`${order.delivery_date}`);
+                    return (
+                      <tr key={order.id}>
+                        <td onClick={() => viewSelectedOrder(order)}>
+                          <Link to={`orders/${order.id}`}>{order.id}</Link>
+                        </td>
+
+                        {/* <td>{order.id}</td> */}
+                        <td>{date.toLocaleString()}</td>
+                      </tr>
+                    );
+                  })
+                : filteredItems.map(item => {
+                    const date = new Date(`${item.delivery_date}`);
+                    return (
+                      <tr key={item.id}>
+                        <td>{item.id}</td>
+                        <td>{date.toLocaleString()}</td>
+                      </tr>
+                    );
+                  })}
+            </tbody>
+          </table>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <h2>View Order</h2>
+          <ViewPastOrder order={orderToView} />
+        </div>
+      );
+    }
   }
 }
 
