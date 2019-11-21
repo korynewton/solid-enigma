@@ -2,8 +2,9 @@ import React from 'react';
 
 import OrderTotal from '../order-total/order-total.component';
 
-const ViewPastOrder = ({ order, history }) => {
+const ViewPastOrder = ({ order }) => {
   let orderTotal = 0;
+  const deliveryDate = new Date(order.delivery_date);
 
   return (
     <div>
@@ -40,6 +41,7 @@ const ViewPastOrder = ({ order, history }) => {
         })}
       </table>
       <OrderTotal cupcakeTotal={orderTotal} />
+      <h3>Delivery date: {deliveryDate.toLocaleString()}</h3>
     </div>
   );
 };

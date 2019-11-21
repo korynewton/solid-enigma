@@ -223,7 +223,7 @@ class Orders extends React.Component {
     } else {
       return (
         <div>
-          <h2>View Order</h2>
+          <h2>Order View:</h2>
           <ViewPastOrder order={orderToView} />
         </div>
       );
