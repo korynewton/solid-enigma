@@ -1,5 +1,7 @@
 import React from 'react';
 
+import './order-total.styles.scss';
+
 const OrderTotal = ({ cupcakeTotal }) => {
   const subTotal = cupcakeTotal + 150;
   const salesTax = subTotal * 0.0875;

@@ -5,8 +5,17 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
+  display: flex;
+  justify-content: flex-end;
 }
 
 h1 {
   color: white;
+  margin: auto;
+}
+
+.home-link {
+  color: white;
+  margin-right: 10px;
 }

@@ -11,7 +11,12 @@ import './App.styles.scss';
 function App() {
   return (
     <div>
-      <h1 className="header">Tinycakes</h1>
+      <header className="header">
+        <h1>Tinycakes</h1>
+        <a className="home-link" href="/">
+          Home
+        </a>
+      </header>
       <Switch>
         <Route exact path="/" component={Home} />
         <Route path="/order" component={Order} />

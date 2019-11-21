@@ -1,6 +1,8 @@
 import React from 'react';
 import axios from 'axios';
 
+import './orders.styles.scss';
+
 import SortingOptions from '../../components/sorting-options/sorting-options.component';
 class Orders extends React.Component {
   state = {
@@ -145,8 +147,6 @@ class Orders extends React.Component {
     const { changeSort, handleSelectChange, handleSelectToppingChange } = this;
     return (
       <div>
-        <h2>Orders:</h2>
-
         <SortingOptions
           bases={bases}
           frostings={frostings}
@@ -155,6 +155,8 @@ class Orders extends React.Component {
           handleSelectChange={handleSelectChange}
           handleSelectToppingChange={handleSelectToppingChange}
         />
+
+        <h2>Orders:</h2>
 
         <table>
           <tbody>

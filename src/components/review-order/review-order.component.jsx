@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import './review-order.styles.scss';
+
 import SingleCupcakeDetails from '../single-cupcake-details/single-cupcake-details.component';
 import OrderTotal from '../order-total/order-total.component';
 import DateTimeSelector from '../date-time-selctor/date-time-selector.component';
@@ -17,6 +19,7 @@ const ReviewOrder = ({ uniqueCupcakes, submitOrder }) => {
 
   return (
     <div className="container">
+      <h2>Order Review:</h2>
       <table>
         <tbody>
           <tr>
@@ -37,7 +40,9 @@ const ReviewOrder = ({ uniqueCupcakes, submitOrder }) => {
       <OrderTotal cupcakeTotal={cupcakeTotal} />
       <DateTimeSelector setDate={setDate} date={date} />
 
-      <button onClick={() => submitOrder(date)}> Submit Order</button>
+      <div className="submit-button">
+        <button onClick={() => submitOrder(date)}>Submit Order</button>
+      </div>
     </div>
   );
 };
