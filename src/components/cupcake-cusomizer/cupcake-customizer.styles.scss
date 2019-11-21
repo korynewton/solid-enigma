@@ -4,9 +4,15 @@
   flex-flow: column;
   width: 300px;
 }
+
+.button-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 button {
   width: 60%;
-  margin: 2px;
+  margin: 10px;
   border: 1px solid black;
   cursor: pointer;
 }
